@@ -6,4 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+# JSON anahtarları (ör. Google Service Account). İstisnalar repo için gerekli dosyalar.
 *.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!public/manifest.json
+!metadata.json
