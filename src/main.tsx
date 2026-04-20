@@ -9,13 +9,31 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-// Register Service Worker
+// Service Worker:
+// - production: register for offline support
+// - development: aggressively unregister/clear to avoid stale UI/cache
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(registration => {
-      console.log('SW registered: ', registration);
-    }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
+    if (import.meta.env.PROD) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          console.log('SW registered: ', registration);
+        })
+        .catch((registrationError) => {
+          console.log('SW registration failed: ', registrationError);
+        });
+      return;
+    }
+
+    void navigator.serviceWorker.getRegistrations().then((regs) => {
+      regs.forEach((r) => void r.unregister());
     });
+
+    if ('caches' in window) {
+      void caches.keys().then((keys) => {
+        keys.forEach((k) => void caches.delete(k));
+      });
+    }
   });
 }

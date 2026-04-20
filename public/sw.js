@@ -1,4 +1,4 @@
-const CACHE_NAME = 'penguentv-v1';
+const CACHE_NAME = 'penguentv-v6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -38,6 +38,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Skip cross-origin requests
   if (!event.request.url.startsWith(self.location.origin)) return;
+  const requestUrl = new URL(event.request.url);
+
+  // Always fetch latest logo from network (do not cache logo file)
+  if (requestUrl.pathname.endsWith('/penguenlogo1.png')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   // Handle navigation requests for SPA
   if (event.request.mode === 'navigate') {

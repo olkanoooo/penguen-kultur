@@ -3,9 +3,17 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import type { ShootingSession } from '../types';
 
+export interface ExportSessionsOptions {
+  /** Planlı bölümde kullanılacak satırlar (sıra korunur). Verilmezse `sessions` içinden planlılar üretilir. */
+  plannedSubset?: ShootingSession[];
+  /** Alt bilgi (tek birleşik hücre; başlık/satır renk şemasına dokunulmaz). */
+  archiveNote?: string;
+}
+
 export async function exportSessionsToExcel(
   sessions: ShootingSession[],
-  type: 'all' | 'completed' = 'all'
+  type: 'all' | 'completed' = 'all',
+  options?: ExportSessionsOptions
 ): Promise<void> {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(type === 'completed' ? 'Tamamlanmış' : 'Planlı Çekimler');
@@ -112,9 +120,20 @@ export async function exportSessionsToExcel(
   };
 
   if (type === 'all') {
-    const plannedSessions = sessions
-      .filter((s) => s.status !== 'Tamamlandı' && s.status !== 'İptal Edildi')
-      .sort((a, b) => parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime());
+    const plannedSessions =
+      options?.plannedSubset != null
+        ? [...options.plannedSubset].sort((a, b) => {
+            const t = parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime();
+            if (t !== 0) return t;
+            return a.programName.localeCompare(b.programName, 'tr');
+          })
+        : sessions
+            .filter((s) => s.status !== 'Tamamlandı' && s.status !== 'İptal Edildi')
+            .sort((a, b) => {
+              const t = parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime();
+              if (t !== 0) return t;
+              return a.programName.localeCompare(b.programName, 'tr');
+            });
 
     plannedSessions.forEach(addSessionRow);
 
@@ -130,16 +149,33 @@ export async function exportSessionsToExcel(
 
     const completedSessions = sessions
       .filter((s) => s.status === 'Tamamlandı')
-      .sort((a, b) => parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime());
+      .sort((a, b) => {
+        const t = parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime();
+        if (t !== 0) return t;
+        return a.programName.localeCompare(b.programName, 'tr');
+      });
 
     completedSessions.forEach(addSessionRow);
   } else {
     const completedSessions = sessions
       .filter((s) => s.status === 'Tamamlandı')
-      .sort((a, b) => parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime());
+      .sort((a, b) => {
+        const t = parseISO(a.startTime).getTime() - parseISO(b.startTime).getTime();
+        if (t !== 0) return t;
+        return a.programName.localeCompare(b.programName, 'tr');
+      });
 
     completedSessions.forEach(addSessionRow);
   }
+
+  const defaultFooter = `Dışa aktarım: ${format(new Date(), 'dd.MM.yyyy HH:mm')}`;
+  const footerText = options?.archiveNote ?? defaultFooter;
+  worksheet.addRow({});
+  const footerRow = worksheet.addRow({ programName: footerText });
+  footerRow.height = 28;
+  footerRow.getCell(1).alignment = { wrapText: true, vertical: 'middle', horizontal: 'left' };
+  footerRow.font = { italic: true, size: 10, color: { argb: 'FF64748B' } };
+  worksheet.mergeCells(`A${footerRow.number}:K${footerRow.number}`);
 
   const buffer = await workbook.xlsx.writeBuffer();
   const dateStr = format(new Date(), 'dd_MM_yyyy');

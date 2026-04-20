@@ -75,7 +75,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="px-8 py-10 lg:px-10 lg:py-12">
             <div className="mb-10 flex flex-col items-center text-center">
               <img
-                src="/penguenlogo1.png"
+                src="/penguenlogo1.png?v=20260420e"
                 alt="Penguen Kültür"
                 className="mx-auto h-32 w-auto max-w-[280px] object-contain md:h-36"
               />
@@ -146,8 +146,10 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </p>
           </div>
         </div>
-        <p className="mt-6 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">© 2026</p>
       </motion.div>
+      <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff6600]/65">
+        © Olkano
+      </p>
     </div>
   );
 };

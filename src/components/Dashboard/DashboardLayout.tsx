@@ -31,8 +31,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onLogout,
   children,
 }) => (
-  <div className="min-h-screen flex flex-col bg-[#0b0b10] text-white">
-    <header className="shrink-0 flex items-center justify-between gap-4 px-4 py-3 md:px-8 md:py-4 border-b border-[#ff6600]/40 bg-[#0b0b10]/95 backdrop-blur-md z-20">
+  <div className="flex min-h-dvh flex-col bg-[#0b0b10] text-white">
+    <header className="sticky top-0 z-50 flex shrink-0 items-center justify-between gap-4 border-b border-[#ff6600]/40 bg-[#0b0b10]/95 px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.45)] backdrop-blur-md md:px-8 md:py-4">
       <h1 className="text-sm md:text-base font-black tracking-[0.12em] text-[#ff6600] drop-shadow-[0_0_8px_rgba(255,102,0,0.45)] truncate">
         {brandTitle}
       </h1>
@@ -63,6 +63,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
     </header>
 
-    <main className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 lg:p-8">{children}</main>
+    <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">{children}</main>
   </div>
 );
