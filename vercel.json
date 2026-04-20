@@ -3,20 +3,16 @@
     {
       "src": "server.ts",
       "use": "@vercel/node"
-    },
-    {
-      "src": "dist/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server.ts"
+      "dest": "server.ts"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/$1"
+      "dest": "server.ts"
     }
   ]
 }
