@@ -15,6 +15,10 @@ app.get('/api/kullanicilar', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: '.' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
