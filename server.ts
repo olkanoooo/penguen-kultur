@@ -1,5 +1,5 @@
 import express from 'express';
-import { sheetsService } from './src/services/sheets.service';
+import { sheetsService } from './src/services/sheets.service.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
